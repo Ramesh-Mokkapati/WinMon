@@ -1,0 +1,136 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+#ifndef APSTUDIO_INVOKED
+#include "targetver.h"
+#endif
+#include "afxres.h"
+#include "verrsrc.h"
+#undef APSTUDIO_READONLY_SYMBOLS
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+
+/////////////////////////////////////////////////////////////////////////////
+// Icon
+
+IDR_MAINFRAME           ICON                    "res\\WinMon.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+// Menus
+
+IDR_MAINMENU MENU
+BEGIN
+    POPUP "&File"
+    BEGIN
+        MENUITEM "E&xit",                       ID_FILE_EXIT
+    END
+    POPUP "&View"
+    BEGIN
+        MENUITEM "&Refresh Now\tF5",            ID_VIEW_REFRESH
+        MENUITEM SEPARATOR
+        POPUP "&Update Speed"
+        BEGIN
+            MENUITEM "&High (0.5 s)",           ID_SPEED_HIGH
+            MENUITEM "&Normal (1 s)",           ID_SPEED_NORMAL
+            MENUITEM "&Low (2 s)",              ID_SPEED_LOW
+            MENUITEM "&Very low (5 s)",         ID_SPEED_VERYLOW
+        END
+    END
+    POPUP "&Options"
+    BEGIN
+        MENUITEM "&Always on Top",              ID_OPTIONS_ALWAYSONTOP
+    END
+    POPUP "&Help"
+    BEGIN
+        MENUITEM "&About WinMon...",            ID_HELP_ABOUTWINMON
+    END
+END
+
+IDR_PROCESS_MENU MENU
+BEGIN
+    POPUP "Process"
+    BEGIN
+        MENUITEM "&End Task\tDel",              ID_PROCESS_ENDTASK
+        MENUITEM "Open File &Location",         ID_PROCESS_OPENLOCATION
+        MENUITEM SEPARATOR
+        MENUITEM "&Refresh",                    ID_PROCESS_REFRESH
+    END
+END
+
+/////////////////////////////////////////////////////////////////////////////
+// Accelerators
+
+IDR_ACCELERATORS ACCELERATORS
+BEGIN
+    VK_F5,          ID_VIEW_REFRESH,            VIRTKEY, NOINVERT
+END
+
+/////////////////////////////////////////////////////////////////////////////
+// Dialogs
+
+IDD_ABOUTBOX DIALOGEX 0, 0, 250, 92
+STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_CAPTION | WS_SYSMENU
+CAPTION "About WinMon"
+FONT 9, "Segoe UI", 400, 0, 0x0
+BEGIN
+    ICON            IDR_MAINFRAME,IDC_STATIC,14,14,20,20
+    LTEXT           "WinMon - Windows System Monitor, Version 1.0",IDC_ABOUT_TITLE,46,14,190,10,SS_NOPREFIX
+    LTEXT           "Native C++ / MFC monitor for CPU, memory, processes, disks and network.\nData is collected on a background thread via PDH, PSAPI, Tool Help and IP Helper.",IDC_ABOUT_DETAILS,46,28,196,36
+    DEFPUSHBUTTON   "OK",IDOK,193,71,50,14,WS_GROUP
+END
+
+IDD_WINMON_DIALOG DIALOGEX 0, 0, 640, 420
+STYLE DS_SETFONT | DS_FIXEDSYS | WS_MINIMIZEBOX | WS_MAXIMIZEBOX | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU | WS_THICKFRAME | WS_CLIPCHILDREN
+EXSTYLE WS_EX_APPWINDOW
+CAPTION "WinMon - System Monitor"
+MENU IDR_MAINMENU
+FONT 9, "Segoe UI", 400, 0, 0x0
+BEGIN
+END
+
+/////////////////////////////////////////////////////////////////////////////
+// Version
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,1
+ PRODUCTVERSION 1,0,0,1
+ FILEFLAGSMASK VS_FFI_FILEFLAGSMASK
+#ifdef _DEBUG
+ FILEFLAGS VS_FF_DEBUG
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS VOS_NT_WINDOWS32
+ FILETYPE VFT_APP
+ FILESUBTYPE VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904B0"
+        BEGIN
+            VALUE "FileDescription", "WinMon - Windows System Monitor"
+            VALUE "FileVersion", "1.0.0.1"
+            VALUE "InternalName", "WinMon.exe"
+            VALUE "OriginalFilename", "WinMon.exe"
+            VALUE "ProductName", "WinMon"
+            VALUE "ProductVersion", "1.0.0.1"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+/////////////////////////////////////////////////////////////////////////////
+// MFC framework resources (static link)
+
+#include "afxres.rc"
+#if !defined(_AFXDLL)
+#include "afxribbon.rc"
+#endif
+
+#endif    // English (United States)
