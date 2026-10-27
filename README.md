@@ -4,6 +4,24 @@ A native Windows system monitor built from `system_monitoring_tool_runbook.md`: 
 with a background polling thread, thread-safe shared state, and four tabs (Performance, Processes,
 Network & Connections, Disk Volumes).
 
+## Screenshots
+
+**Performance**: live CPU, memory, disk I/O, and network graphs, plus memory and system-drive usage bars.
+
+![Performance tab](docs/screenshots/performance.png)
+
+**Processes**: sortable process list with CPU %, memory, threads, priority, and per-process I/O. Includes a filter box, End Task, and a loaded-modules pane.
+
+![Processes tab](docs/screenshots/processes.png)
+
+**Network & Connections**: adapter throughput, and TCP/UDP endpoints with their owning process. Addresses are redacted in this screenshot.
+
+![Network & Connections tab](docs/screenshots/network.png)
+
+**Disk Volumes**: fixed-volume capacity, and a folder-size tree, sorted largest-first, for finding what is filling the drive.
+
+![Disk Volumes tab](docs/screenshots/disk-volumes.png)
+
 ## Build
 
 Requires Visual Studio 2022 with *Desktop development with C++* and *C++ MFC for latest v143 build tools*.

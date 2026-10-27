@@ -63,7 +63,8 @@ jobs:
     # Every push to main whose builds and smoke tests all pass gets its own tag and GitHub release.
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     needs: build
-    runs-on: ubuntu-latest
+    # Pinned rather than ubuntu-latest so the image doesn't change under us (the job only needs zip and gh).
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     env:
