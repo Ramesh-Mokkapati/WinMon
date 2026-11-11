@@ -5,6 +5,7 @@
 #include "ProcessPanel.h"
 #include "NetworkPanel.h"
 #include "VolumePanel.h"
+#include "BatteryPanel.h"
 
 class CWinMonDlg : public CDialogEx
 {
@@ -24,6 +25,7 @@ protected:
     afx_msg void OnSize(UINT nType, int cx, int cy);
     afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
     afx_msg LRESULT OnUpdateSysMetrics(WPARAM wParam, LPARAM lParam);
+    afx_msg UINT OnPowerBroadcast(UINT nPowerEvent, LPARAM nEventData);
     afx_msg void OnFileExit();
     afx_msg void OnViewRefresh();
     afx_msg void OnAlwaysOnTop();
@@ -46,6 +48,7 @@ private:
     CProcessPanel     m_processPanel;
     CNetworkPanel     m_networkPanel;
     CVolumePanel      m_volumePanel;
+    CBatteryPanel     m_batteryPanel;
 
     CMonitorEngine m_engine;
     bool           m_alwaysOnTop = false;

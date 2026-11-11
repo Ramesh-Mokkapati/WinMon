@@ -6,6 +6,7 @@
 #include "ProcessMonitor.h"
 #include "DiskMonitor.h"
 #include "NetworkMonitor.h"
+#include "BatteryMonitor.h"
 
 #define WM_UPDATE_SYS_METRICS (WM_USER + 101)
 
@@ -46,4 +47,5 @@ private:
     CProcessMonitor     m_process;
     CDiskMonitor        m_disk;
     CNetworkMonitor     m_network;
+    CBatteryMonitor     m_battery;
 };

@@ -8,6 +8,7 @@ namespace
     constexpr ULONGLONG kProcessEvery = 2;   // cycles
     constexpr ULONGLONG kNetworkEvery = 2;
     constexpr ULONGLONG kVolumeEvery  = 5;
+    constexpr ULONGLONG kPowerEvery   = 5;   // power changes also force a full refresh
 }
 
 CMonitorEngine::CMonitorEngine()
@@ -94,6 +95,7 @@ void CMonitorEngine::Collect(SystemSnapshot& snap, ULONGLONG cycle, bool full)
     const bool doProcesses = full || cycle % kProcessEvery == 0;
     const bool doNetwork   = full || cycle % kNetworkEvery == 0;
     const bool doVolumes   = full || cycle % kVolumeEvery == 0;
+    const bool doPower     = full || cycle % kPowerEvery == 0;
 
     // Throughput is cheap and drives the graph, so sample adapters every cycle.
     std::vector<AdapterInfo> adapters;
@@ -125,6 +127,12 @@ void CMonitorEngine::Collect(SystemSnapshot& snap, ULONGLONG cycle, bool full)
     {
         m_disk.CollectVolumes(snap.volumes);
         ++snap.volumeSeq;
+    }
+
+    if (doPower)
+    {
+        m_battery.Collect(snap.power);
+        ++snap.powerSeq;
     }
 
     ++snap.sampleSeq;

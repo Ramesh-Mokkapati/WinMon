@@ -10,7 +10,7 @@
 
 namespace
 {
-    enum { IDC_TABS = 1100, IDC_STATUS, IDC_PANEL_PERF, IDC_PANEL_PROC, IDC_PANEL_NET, IDC_PANEL_DISK };
+    enum { IDC_TABS = 1100, IDC_STATUS, IDC_PANEL_PERF, IDC_PANEL_PROC, IDC_PANEL_NET, IDC_PANEL_DISK, IDC_PANEL_POWER };
 
     struct SpeedOption { UINT id; DWORD ms; };
     const SpeedOption kSpeeds[] = {
@@ -38,6 +38,7 @@ BEGIN_MESSAGE_MAP(CWinMonDlg, CDialogEx)
     ON_WM_SIZE()
     ON_WM_GETMINMAXINFO()
     ON_MESSAGE(WM_UPDATE_SYS_METRICS, &CWinMonDlg::OnUpdateSysMetrics)
+    ON_WM_POWERBROADCAST()
     ON_COMMAND(ID_FILE_EXIT, &CWinMonDlg::OnFileExit)
     ON_COMMAND(ID_VIEW_REFRESH, &CWinMonDlg::OnViewRefresh)
     ON_COMMAND(ID_OPTIONS_ALWAYSONTOP, &CWinMonDlg::OnAlwaysOnTop)
@@ -79,11 +80,13 @@ BOOL CWinMonDlg::OnInitDialog()
     m_processPanel.CreatePanel(&m_tabs, IDC_PANEL_PROC, &m_font, &m_engine);
     m_networkPanel.CreatePanel(&m_tabs, IDC_PANEL_NET, &m_font, &m_engine);
     m_volumePanel.CreatePanel(&m_tabs, IDC_PANEL_DISK, &m_font, &m_engine);
+    m_batteryPanel.CreatePanel(&m_tabs, IDC_PANEL_POWER, &m_font, &m_engine);
 
     m_tabs.AddTab(&m_perfPanel, _T("Performance"), (UINT)-1, FALSE);
     m_tabs.AddTab(&m_processPanel, _T("Processes"), (UINT)-1, FALSE);
     m_tabs.AddTab(&m_networkPanel, _T("Network && Connections"), (UINT)-1, FALSE);
     m_tabs.AddTab(&m_volumePanel, _T("Disk Volumes"), (UINT)-1, FALSE);
+    m_tabs.AddTab(&m_batteryPanel, _T("Power && Battery"), (UINT)-1, FALSE);
     m_tabs.SetActiveTab(0);
 
     m_status.Create(_T("Starting monitor..."), WS_CHILD | WS_VISIBLE | SS_LEFT | SS_NOPREFIX | SS_ENDELLIPSIS | SS_SUNKEN,
@@ -167,17 +170,34 @@ LRESULT CWinMonDlg::OnUpdateSysMetrics(WPARAM, LPARAM)
     m_processPanel.UpdateMetrics(snap);
     m_networkPanel.UpdateMetrics(snap);
     m_volumePanel.UpdateMetrics(snap);
+    m_batteryPanel.UpdateMetrics(snap);
 
     UpdateStatus(snap);
     return 0;
 }
 
+UINT CWinMonDlg::OnPowerBroadcast(UINT nPowerEvent, LPARAM nEventData)
+{
+    // AC plugged/unplugged, battery level step or battery saver toggled: refresh now
+    // rather than waiting for the next scheduled power poll.
+    if (nPowerEvent == PBT_APMPOWERSTATUSCHANGE || nPowerEvent == PBT_APMRESUMEAUTOMATIC)
+        m_engine.RequestFullRefresh();
+    return CDialogEx::OnPowerBroadcast(nPowerEvent, nEventData);
+}
+
 void CWinMonDlg::UpdateStatus(const SystemSnapshot& snap)
 {
+    CString battery;
+    if (snap.power.hasBattery && snap.power.lifePercent >= 0)
+        battery.Format(_T("   |   Battery %d %%%s"), snap.power.lifePercent,
+                       snap.power.acLineStatus == 1 ? _T(" (plugged in)") : _T(""));
+    else if (snap.power.acLineStatus == 1)
+        battery = _T("   |   AC power");
+
     CString status;
-    status.Format(_T("  Updated %02u:%02u:%02u   |   CPU %.0f %%   |   Memory %u %%   |   Refresh every %.1f s   |   %s"),
+    status.Format(_T("  Updated %02u:%02u:%02u   |   CPU %.0f %%   |   Memory %u %%%s   |   Refresh every %.1f s   |   %s"),
                   snap.timestamp.wHour, snap.timestamp.wMinute, snap.timestamp.wSecond,
-                  snap.cpu.totalUsage, snap.memory.memoryLoad,
+                  snap.cpu.totalUsage, snap.memory.memoryLoad, battery.GetString(),
                   m_engine.GetIntervalMs() / 1000.0,
                   theApp.IsElevated() ? _T("Running as administrator")
                                       : _T("Standard user: some process details are unavailable"));

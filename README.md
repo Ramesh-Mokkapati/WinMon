@@ -1,12 +1,12 @@
 # WinMon – Windows System Monitor (C++ / MFC)
 
 A native Windows system monitor built from `system_monitoring_tool_runbook.md`: a dialog-based MFC app
-with a background polling thread, thread-safe shared state, and four tabs (Performance, Processes,
-Network & Connections, Disk Volumes).
+with a background polling thread, thread-safe shared state, and five tabs (Performance, Processes,
+Network & Connections, Disk Volumes, Power & Battery).
 
 ## Screenshots
 
-**Performance**: live CPU, memory, disk I/O, and network graphs, plus memory and system-drive usage bars.
+**Performance**: live CPU, memory, disk I/O, and network graphs, plus memory and system-drive usage bars. The status bar also shows the battery charge.
 
 ![Performance tab](docs/screenshots/performance.png)
 
@@ -21,6 +21,10 @@ Network & Connections, Disk Volumes).
 **Disk Volumes**: fixed-volume capacity, and a folder-size tree, sorted largest-first, for finding what is filling the drive.
 
 ![Disk Volumes tab](docs/screenshots/disk-volumes.png)
+
+**Power & Battery**: power source, charge, time remaining, power plan, and per-battery health and live telemetry (shown here on battery power). The battery serial number and unique ID are redacted in this screenshot.
+
+![Power & Battery tab](docs/screenshots/power-battery.png)
 
 ## Build
 
@@ -65,9 +69,11 @@ powershell -ExecutionPolicy Bypass -File Tests/SmokeTest.ps1 -Configuration Debu
 | 4.2 Sortable `CMFCListCtrl` | `DataListCtrl.*` |
 | 4.3 Double-buffered graph | `GraphCtrl.*` |
 | Folder sizes (multi-threaded scan, tree view) | `FolderScanner.*`, `FolderTreeList.*` |
+| Power & battery (`GetSystemPowerStatus`, `IOCTL_BATTERY_QUERY_*`, power plan) | `BatteryMonitor.*`, `BatteryPanel.*` |
 
 Polling cadence (runbook 5.2): CPU, memory, disk I/O, and network throughput every cycle (1 s by default);
-the process table and sockets every 2 cycles; volumes every 5 cycles. **View → Update Speed** changes the cycle
+the process table and sockets every 2 cycles; volumes and power/battery every 5 cycles (plugging in or
+unplugging AC refreshes immediately). **View → Update Speed** changes the cycle
 length, and **F5** forces a full refresh.
 
 Disk Volumes tab: below the volume list, **Folder sizes** shows each fixed drive as an expandable tree.
@@ -85,3 +91,9 @@ The scan uses up to 8 threads and has a progress bar and a **Stop** button. Then
 
 Process tab: right-click a process (or press **Del**) for **End Task**, which asks for confirmation and warns
 about critical system processes. **Open File Location** is also on that menu. Selecting a process lists its loaded modules.
+
+Power & Battery tab: power source (AC/battery), overall charge, time remaining, battery saver, and the active power plan.
+For each battery, it shows identity (name, manufacturer, serial, unique ID, chemistry, manufacture date), live state
+(charging/discharging/critical, charge %, remaining capacity, signed charge/discharge rate, voltage, time to empty or full,
+temperature), and health (full-charge vs design capacity, wear %, cycle count, alert levels). Health below 75 %,
+temperature above 45 °C, and charge at or below 10 % are shown in red. Desktops without a battery show "No battery detected".

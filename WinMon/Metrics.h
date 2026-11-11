@@ -78,6 +78,57 @@ struct ConnectionInfo
     CString   processName;
 };
 
+// One battery device (IOCTL_BATTERY_QUERY_*). Capacities are mWh unless
+// relativeCapacity is set, in which case they are a percentage of full charge.
+struct BatteryInfo
+{
+    int       slot = 0;
+    CString   deviceName;
+    CString   manufacturer;
+    CString   serialNumber;
+    CString   uniqueId;
+    CString   chemistry;
+    bool      rechargeable = true;
+    bool      systemBattery = true;   // powers the system (not a UPS / peripheral)
+    bool      shortTerm = false;      // UPS-style battery
+    bool      relativeCapacity = false;
+    WORD      manufactureYear = 0;    // 0 when the battery does not report it
+    BYTE      manufactureMonth = 0;
+    BYTE      manufactureDay = 0;
+
+    ULONG     powerState = 0;         // BATTERY_POWER_ON_LINE | CHARGING | DISCHARGING | CRITICAL
+    bool      statusKnown = false;
+    ULONG     currentCapacity = 0;    // BATTERY_UNKNOWN_CAPACITY when unknown
+    ULONG     fullChargeCapacity = 0;
+    ULONG     designCapacity = 0;
+    ULONG     defaultAlert1 = 0;      // manufacturer low-battery alert level (the lower one)
+    ULONG     defaultAlert2 = 0;      // manufacturer warning alert level
+    ULONG     criticalBias = 0;
+    ULONG     cycleCount = 0;
+    ULONG     voltageMv = 0;          // BATTERY_UNKNOWN_VOLTAGE when unknown
+    LONG      rateMw = 0;             // >0 charging, <0 discharging
+    bool      rateKnown = false;
+    double    chargePercent = -1.0;   // -1 when unknown
+    double    healthPercent = -1.0;   // full charge / design capacity
+    double    temperatureC = 0.0;
+    bool      temperatureKnown = false;
+    ULONG     estimatedSeconds = 0xFFFFFFFF;  // driver estimate of time to empty
+    ULONG     secondsToFull = 0xFFFFFFFF;     // derived from the charge rate
+};
+
+// System-wide power status (GetSystemPowerStatus) plus the individual batteries.
+struct PowerInfo
+{
+    BYTE      acLineStatus = 255;     // 0 battery, 1 AC, 255 unknown
+    BYTE      batteryFlag = 255;      // 128 = no system battery, 255 = unknown
+    int       lifePercent = -1;       // -1 when unknown
+    DWORD     lifeTimeSec = 0xFFFFFFFF;
+    bool      batterySaver = false;
+    bool      hasBattery = false;
+    CString   powerPlan;
+    std::vector<BatteryInfo> batteries;
+};
+
 struct SystemSummary
 {
     DWORD     processCount = 0;
@@ -101,8 +152,10 @@ struct SystemSnapshot
     std::vector<VolumeInfo>     volumes;
     std::vector<AdapterInfo>    adapters;
     std::vector<ConnectionInfo> connections;
+    PowerInfo                   power;
 
     ULONGLONG                   sampleSeq = 0;
+    ULONGLONG                   powerSeq = 0;
     ULONGLONG                   processSeq = 0;
     ULONGLONG                   volumeSeq = 0;
     ULONGLONG                   networkSeq = 0;

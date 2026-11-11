@@ -59,6 +59,34 @@ namespace fmt
         return out;
     }
 
+    // "3 h 05 min" for battery time estimates.
+    inline CString HoursMinutes(ULONGLONG seconds)
+    {
+        const ULONGLONG minutes = (seconds + 30) / 60;
+        CString s;
+        if (minutes >= 60)
+            s.Format(_T("%I64u h %02I64u min"), minutes / 60, minutes % 60);
+        else
+            s.Format(_T("%I64u min"), minutes);
+        return s;
+    }
+
+    // Integer with thousands separators: 52,340.
+    inline CString Grouped(LONGLONG v)
+    {
+        CString digits;
+        digits.Format(_T("%I64u"), ULONGLONG(v < 0 ? -v : v));
+        CString out = v < 0 ? _T("-") : _T("");
+        const int n = digits.GetLength();
+        for (int i = 0; i < n; ++i)
+        {
+            out += digits[i];
+            if ((n - i - 1) % 3 == 0 && i != n - 1)
+                out += _T(',');
+        }
+        return out;
+    }
+
     inline CString Percent(double v)
     {
         CString s;

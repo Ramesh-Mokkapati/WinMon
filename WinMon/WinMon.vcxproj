@@ -60,7 +60,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>Pdh.lib;Psapi.lib;Iphlpapi.lib;Wtsapi32.lib;Ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Pdh.lib;Psapi.lib;Iphlpapi.lib;Wtsapi32.lib;Ws2_32.lib;SetupAPI.lib;PowrProf.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <!-- Phase 5.1: request elevation so all processes can be inspected / terminated. -->
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
@@ -104,6 +104,8 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="BatteryMonitor.h" />
+    <ClInclude Include="BatteryPanel.h" />
     <ClInclude Include="CpuMonitor.h" />
     <ClInclude Include="DataListCtrl.h" />
     <ClInclude Include="DataManager.h" />
@@ -129,6 +131,8 @@
     <ClInclude Include="WinMonDlg.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BatteryMonitor.cpp" />
+    <ClCompile Include="BatteryPanel.cpp" />
     <ClCompile Include="CpuMonitor.cpp" />
     <ClCompile Include="DataListCtrl.cpp" />
     <ClCompile Include="DiskMonitor.cpp" />
